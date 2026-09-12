@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "./db.js";
 
 export const LOG = (message: string, error?: boolean | false, ...optionalParams: any[]) => {
     console.log(`[${new Date().toISOString()}]${error ? '[ERROR]' : ''} ${message}`, ...optionalParams);

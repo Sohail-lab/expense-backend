@@ -1,4 +1,4 @@
-import { executeQuery, executeTransaction } from "../helper";
+import { executeQuery, executeTransaction } from "../helper.js";
 
 export const getAllGroups = () => executeQuery(
     `

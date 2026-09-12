@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Database } from "../types.js";
-import { ErrorResponseDB, LOG } from "../helper.js";
-import { getTransactionByIdForUser } from "../queries/transactionQueries";
+import { LOG } from "../helper.js";
+import { getTransactionByIdForUser } from "../queries/transactionQueries.js";
 
 const createTransactionsRouter = (db: Database) => {
     const router = Router();

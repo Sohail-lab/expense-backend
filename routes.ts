@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { createUsersRouter } from "./routes/users.ts";
-import { createGroupsRouter } from "./routes/groups.ts";
-import { createPaymentsRouter } from "./routes/payments.ts";
-import { createTransactionsRouter } from "./routes/transactions.ts";
+import { createUsersRouter } from "./routes/users.js";
+import { createGroupsRouter } from "./routes/groups.js";
+import { createPaymentsRouter } from "./routes/payments.js";
+import { createTransactionsRouter } from "./routes/transactions.js";
 import type { Database } from "./types.ts";
-import { LOG } from "./helper.ts";
-import { checkDBConnection } from "./db.ts";
-import { createTables, deleteTables, insertTestData } from "./queries/test.ts";
+import { LOG } from "./helper.js";
+import { checkDBConnection } from "./db.js";
+import { createTables, deleteTables, insertTestData } from "./queries/test.js";
 
 const createRoutes = (db: Database) => {
 	const router = Router();

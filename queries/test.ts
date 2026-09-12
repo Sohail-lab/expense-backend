@@ -1,11 +1,11 @@
-import { db } from "../db";
+import { db } from "../db.js";
 import {
     CreateUsersTable,
     CreateGroupsTable,
     CreateTransactionsTable,
     CreatePaymentsTable
-} from "./createInitialTables";
-import { LOG } from "../helper";
+} from "./createInitialTables.js";
+import { LOG } from "../helper.js";
 
 const getAllTablesQuery = `SHOW TABLES;`;
 

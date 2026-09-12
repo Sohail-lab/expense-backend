@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { Database } from "../types.js";
-import { ErrorResponseDB, LOG } from "../helper.js";
+import { LOG } from "../helper.js";
 import { getAllPaymentsForTransactionAndUser, getPaymentByIdForUser } from "../queries/paymentQueries.js";
 
 const createPaymentsRouter = (db: Database) => {
