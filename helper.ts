@@ -20,7 +20,7 @@ export const executeTransaction = async (query: string, params?: any[]): Promise
 
         await connection.commit();
 
-        LOG(`Transaction executed successfully: ${query} with params ${params}`);
+        LOG(`Transaction executed successfully: ${constructLogMessage(query, params)}`);
     } catch (error) {
         await connection.rollback();
         LOG(`Error executing transaction: ${constructLogMessage(query, params)}`, true, error);
@@ -34,7 +34,7 @@ export const executeQuery = async (query: string, params?: any[]): Promise<any> 
     const connection = await db.getConnection();
     try {
         const [rows] = await connection.query(query, params);
-        LOG(`Query executed successfully: ${query} with params ${params}`);
+        LOG(`Query executed successfully: ${constructLogMessage(query, params)}`);
         return rows;
     }
     catch (error) {
