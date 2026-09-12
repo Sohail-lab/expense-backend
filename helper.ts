@@ -23,7 +23,7 @@ export const executeTransaction = async (query: string, params?: any[]): Promise
         LOG(`Transaction executed successfully: ${query} with params ${params}`);
     } catch (error) {
         await connection.rollback();
-        LOG(`Error executing transaction: ${query} with params ${params}`, true, error);
+        LOG(`Error executing transaction: ${constructLogMessage(query, params)}`, true, error);
         throw error;
     } finally {
         connection.release();
@@ -38,13 +38,22 @@ export const executeQuery = async (query: string, params?: any[]): Promise<any> 
         return rows;
     }
     catch (error) {
-        LOG(`Error executing query: ${query} with params ${params}`, true, error);
+        LOG(`Error executing query: ${constructLogMessage(query, params)}`, true, error);
         throw error;
     }
     finally {
         connection.release();
     }
 }
+
+const constructLogMessage = (query: string, params?: any[]) => {
+    if(params === undefined) {
+        return query;
+    }
+    let idx = 0;
+    let formattedQuery = query.replace(/\?/g, () => params[idx++]);
+    return formattedQuery;
+};
 
 export const generateUniqueGroupCode = async (length: number = 6): Promise<string> => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#';
