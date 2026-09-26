@@ -56,7 +56,7 @@ VALUES
 INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (100, 1, 500.00, 'Taxi from airport',
  2, 1, 500.00,
@@ -65,7 +65,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (101, 1, 800.00, 'Hotel booking',
  3, 1, 500.00,
@@ -74,7 +74,7 @@ VALUES
 INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (102, 1, 1000.00, 'Dinner',
  4, 1, 0.00,
@@ -83,7 +83,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 
 (103, 1, 1200.00, 'Beach house groceries',
@@ -101,7 +101,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 
 (104, 1, 2000.00, 'Villa booking',
@@ -119,7 +119,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (105, 2, 1500.00, 'Monthly electricity',
  5, 1, 600.00,
@@ -128,7 +128,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 
 (106, 2, 2000.00, 'Electricity bill',
@@ -146,7 +146,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (107, 2, 750.00, 'Internet bill',
  6, 1, 750.00,
@@ -155,7 +155,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 
 (108, 2, 1000.00, 'Custom grocery split',
@@ -173,7 +173,7 @@ VALUES
  INSERT INTO transactions
 (transaction_id, group_id, initial_amount, description,
  debt_user, credit_user, remaining_amount,
- split_transaction_id, payments_till_now, settlement_status)
+ split_transaction, payments_till_now, settlement_status)
 VALUES
 (109, 3, 600.00, 'Office lunch order',
  8, 7, 600.00,

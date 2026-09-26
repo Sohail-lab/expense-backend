@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS expense_groups (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
-    join_date TIMESTAMP DEFAULT NULL,
+    join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (group_id, user_id)
 );
 `;
@@ -29,6 +29,7 @@ export const CreatePaymentsTable: string = `
 CREATE TABLE IF NOT EXISTS payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_id INT NOT NULL,
+    note VARCHAR(255),
     debt_user INT NOT NULL,
     credit_user INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     split_transaction Boolean NOT NULL DEFAULT FALSE,
     payments_till_now INT NOT NULL DEFAULT 0,
     settlement_status ENUM('pending', 'settled') NOT NULL DEFAULT 'pending',
+    notification_status ENUM('positive', 'negative') NOT NULL DEFAULT 'negative',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (transaction_id, debt_user, credit_user),

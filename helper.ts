@@ -1,4 +1,5 @@
 import { db } from "./db.js";
+import { getGroupCodes } from './queries/groupQueries.js';
 
 export const LOG = (message: string, error?: boolean | false, ...optionalParams: any[]) => {
     console.log(`[${new Date().toISOString()}]${error ? '[ERROR]' : ''} ${message}`, ...optionalParams);
@@ -57,7 +58,7 @@ const constructLogMessage = (query: string, params?: any[]) => {
 
 export const generateUniqueGroupCode = async (length: number = 6): Promise<string> => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#';
-    const [existingCodes] = await db.query('SELECT DISTINCT group_code FROM expense_groups;');
+    const existingCodes = await getGroupCodes();
 
     const existingCodeSet = new Set((existingCodes as any[]).map(row => row.group_code));
     let result: string;
