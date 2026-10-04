@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(createRoutes(db));
+app.use(createRoutes());
 
 app.listen(3000, "0.0.0.0", async () => {
     console.log('Server is running on port 3000');
