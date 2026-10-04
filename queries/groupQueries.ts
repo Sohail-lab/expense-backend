@@ -1,4 +1,4 @@
-import { executeQuery, executeTransaction } from "../helper.js";
+import { executeQuery, executeTransaction } from "../helpers/helper.js";
 
 export const getAllGroups = () => executeQuery(
     `
@@ -18,13 +18,6 @@ export const getGroupById = (groupId: number) => executeQuery(
     SELECT * FROM expense_groups WHERE group_id = ?;
     `,
     [groupId]
-);
-
-export const getGroupTransactions = (groupId: number, userId: number) => executeQuery(
-    `
-    SELECT * FROM transactions WHERE group_id = ? AND (debt_user = ? OR credit_user = ?);
-    `,
-    [groupId, userId, userId]
 );
 
 export const createGroup = (name: string, userId: number, groupCode: string) => executeTransaction(

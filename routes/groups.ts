@@ -1,9 +1,8 @@
 import { Router } from "express";
-import type { Database } from "../types.js";
-import { LOG, generateUniqueGroupCode } from "../helper.js";
+import { LOG, generateUniqueGroupCode } from "../helpers/helper.js";
 import { getAllGroups, getCurrentUserGroups, createGroup, joinGroup } from "../queries/groupQueries.js";
 
-const createGroupsRouter = (db: Database) => {
+const createGroupsRouter = () => {
     const router = Router();
 
     router.get("/", async (req, res) => {

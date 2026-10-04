@@ -1,6 +1,6 @@
 import express from 'express';
-import { db } from './db.js';
-import { createRoutes } from './routes.js';
+import { db } from './db/db.js';
+import { createRoutes } from './routes/routes.js';
 
 const app = express();
 

@@ -1,4 +1,4 @@
-import { executeQuery, executeTransaction } from "../helper.js";
+import { executeQuery, executeTransaction } from "../helpers/helper.js";
 
 export const getCurrentUserDetails = (userId: number) => executeQuery(
     `

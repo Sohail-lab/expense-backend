@@ -1,4 +1,4 @@
-import { executeQuery, executeTransaction } from "../helper.js";
+import { executeQuery, executeTransaction } from "../helpers/helper.js";
 import { TxnData } from "../types/txnData.js";
 
 export const getTransactionByGroupForUser = (groupId: number, userId: number) => executeQuery(
@@ -7,6 +7,13 @@ export const getTransactionByGroupForUser = (groupId: number, userId: number) =>
     `,
     [groupId, userId, userId]
 );
+
+export const getTransactionDetails = (transactionId: number, userId: number) => executeQuery(
+        `
+        SELECT * from payments WHERE transaction_id = ? AND (debt_user = ? OR credit_user = ?);
+        `,
+        [transactionId, userId, userId]
+    );
 
 export const createTransaction = async (txnData: TxnData) => {
     const { group_id, initial_amount, description, debt_user, credit_user, remaining_amount, split_transaction } = txnData;

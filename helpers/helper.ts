@@ -1,5 +1,5 @@
-import { db } from "./db.js";
-import { getGroupCodes } from './queries/groupQueries.js';
+import { db } from "../db/db.js";
+import { getGroupCodes } from '../queries/groupQueries.js';
 
 export const LOG = (message: string, error?: boolean | false, ...optionalParams: any[]) => {
     console.log(`[${new Date().toISOString()}]${error ? '[ERROR]' : ''} ${message}`, ...optionalParams);

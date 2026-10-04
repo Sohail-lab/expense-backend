@@ -1,9 +1,8 @@
 import { Router } from "express";
-import type { Database } from "../types.js";
-import { LOG } from "../helper.js";
+import { LOG } from "../helpers/helper.js";
 import { getCurrentUserDetails, getCurrentUserId, createUser, deleteUser, updateUser } from '../queries/userQueries.js';
 
-const createUsersRouter = (db: Database) => {
+const createUsersRouter = () => {
 	const router = Router();
 
 	router.get("/", async (req, res) => {

@@ -1,15 +1,27 @@
 import { Router } from "express";
-import type { Database } from "../types.js";
-import { LOG } from "../helper.js";
-import { getTransactionByGroupForUser, createTransaction } from "../queries/transactionQueries.js";
+import { LOG } from "../helpers/helper.js";
+import { getTransactionByGroupForUser, createTransaction, getTransactionDetails } from "../queries/transactionQueries.js";
 
-const createTransactionsRouter = (db: Database) => {
+const createTransactionsRouter = () => {
     const router = Router();
 
-    router.get("/:uid", async (req, res) => {
+    router.get("/", async (req, res) => {
         try {
-            const uid = Number(req.params.uid);
+            const uid = Number(req.query.uid);
             const rows = await getTransactionByGroupForUser(req.body.groupId, uid);
+            res.status(200).json(rows);
+        }
+        catch (error: any) {
+            LOG("Error fetching transaction for user", true, error);
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    router.get("/transaction", async (req, res) => {
+        try {
+            const txnId = Number(req.query.id);
+            const uid = Number(req.query.uid);
+            const rows = await getTransactionDetails(txnId, uid);
             res.status(200).json(rows);
         }
         catch (error: any) {
