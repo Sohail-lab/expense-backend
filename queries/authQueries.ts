@@ -7,6 +7,16 @@ export const getUserByEmail = (email: string) => executeQuery(
     [email]
 );
 
+export const getUserByGoogleId = (googleId: string) => executeQuery(
+    `SELECT * FROM users WHERE google_id = ?;`,
+    [googleId]
+);
+
+export const updateUserGoogleId = (userId: number, googleId: string) => executeQuery(
+    `UPDATE users SET google_id = ? WHERE user_id = ?;`,
+    [googleId, userId]
+);
+
 export const updateUserSession = async (
     userId: number,
     sessionId: string | null,

@@ -23,6 +23,14 @@ export const createUser = (userName: string, email: string, password: string) =>
     [userName, email, password]
 );
 
+export const createGoogleUser = async (userName: string, email: string, googleId: string) => await executeTransaction(
+    `
+    INSERT INTO users (name, email, google_id, password, super_user)
+    VALUES (?, ?, ?, '', FALSE);
+    `,
+    [userName, email, googleId]
+);
+
 export const updateUser = async (userId: number, newData: any) => {
     const oldData = await executeQuery(
         `
