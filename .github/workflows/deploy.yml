@@ -37,20 +37,20 @@ jobs:
         run: |
           ssh -i ~/.ssh/oci_key \
             "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
-            "rm -rf ~/staging/expense-backend/dist-new && mkdir -p ~/staging/expense-backend/dist-new"
+            "rm -rf ~/prod/expense-backend/dist-new && mkdir -p ~/prod/expense-backend/dist-new"
 
           scp -i ~/.ssh/oci_key -r \
             dist/* \
-            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:~/staging/expense-backend/dist-new/"
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:~/prod/expense-backend/dist-new/"
 
       - name: Switch to new build
         run: |
           ssh -i ~/.ssh/oci_key \
             "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
             "
-              rm -rf ~/staging/expense-backend/dist-old &&
-              mv ~/staging/expense-backend/dist ~/staging/expense-backend/dist-old &&
-              mv ~/staging/expense-backend/dist-new ~/staging/expense-backend/dist
+              rm -rf ~/prod/expense-backend/dist-old &&
+              mv ~/prod/expense-backend/dist ~/prod/expense-backend/dist-old &&
+              mv ~/prod/expense-backend/dist-new ~/prod/expense-backend/dist
             "
 
       - name: Restart service
