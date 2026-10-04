@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { LOG } from "../helpers/helper.js";
-import { getTransactionByGroupForUser, createTransaction, getTransactionDetails } from "../queries/transactionQueries.js";
+import { getTransactionByGroupForUser, createTransaction } from "../queries/transactionQueries.js";
 
 const createTransactionsRouter = () => {
     const router = Router();
@@ -8,20 +8,8 @@ const createTransactionsRouter = () => {
     router.get("/", async (req, res) => {
         try {
             const uid = Number(req.query.uid);
-            const rows = await getTransactionByGroupForUser(req.body.groupId, uid);
-            res.status(200).json(rows);
-        }
-        catch (error: any) {
-            LOG("Error fetching transaction for user", true, error);
-            res.status(500).json({ error: error.message });
-        }
-    });
-
-    router.get("/transaction", async (req, res) => {
-        try {
-            const txnId = Number(req.query.id);
-            const uid = Number(req.query.uid);
-            const rows = await getTransactionDetails(txnId, uid);
+            const groupId = Number(req.query.groupId);
+            const rows = await getTransactionByGroupForUser(groupId, uid);
             res.status(200).json(rows);
         }
         catch (error: any) {
@@ -46,7 +34,7 @@ const createTransactionsRouter = () => {
     });
 
     router.delete("/:id", async (req, res) => {
-        res.json({ message: "Delete group" });
+        res.json({ message: "Delete transaction" });
     });
 
     return router;

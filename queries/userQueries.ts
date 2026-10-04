@@ -7,11 +7,11 @@ export const getCurrentUserDetails = (userId: number) => executeQuery(
     [userId]
 );
 
-export const getCurrentUserId = (email: string, password: string) => executeQuery(
+export const getCurrentUserId = (email: string) => executeQuery(
     `
-    SELECT user_id FROM users WHERE email = ? AND password = ?;
+    SELECT user_id FROM users WHERE email = ?;
     `,
-    [email, password]
+    [email]
 );
 
 export const createUser = (userName: string, email: string, password: string) => executeTransaction(

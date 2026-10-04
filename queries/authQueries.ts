@@ -1,6 +1,6 @@
 import { executeQuery, executeTransaction } from "../helpers/helper.js";
 
-export const getUserByEmail = (email: number) => executeQuery(
+export const getUserByEmail = (email: string) => executeQuery(
     `
     SELECT * FROM users WHERE email = ?;
     `,

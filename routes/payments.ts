@@ -7,18 +7,21 @@ const createPaymentsRouter = () => {
 
     router.get("/", async (req, res) => {
         try {
-            const rows = await getAllPaymentsForTransactionAndUser(req.body.transactionId, req.body.userId);
+            const txnId = Number(req.query.id);
+            const uid = Number(req.query.uid);
+            const rows = await getAllPaymentsForTransactionAndUser(txnId, uid);
             res.status(200).json(rows);
         } catch (error: any) {
             LOG("Error fetching payments", true, error);
-            res.status(500).json({ error: "Internal Server Error" });
+            res.status(500).json({ error: error.message });
         }
     });
 
     router.get("/:uid", async (req, res) => {
         try {
             const uid = Number(req.params.uid);
-            const rows = await getPaymentByIdForUser(req.body.paymentId, uid);
+            const paymentId = Number(req.query.paymentId)
+            const rows = await getPaymentByIdForUser(paymentId, uid);
             res.status(200).json(rows);
         }
         catch (error: any) {
@@ -28,15 +31,15 @@ const createPaymentsRouter = () => {
     });
 
     router.post("/", async (req, res) => {
-        res.json({ message: "Create group" });
+        res.json({ message: "Create payment" });
     });
 
     router.patch("/:id", async (req, res) => {
-        res.json({ message: "Update group partially" });
+        res.json({ message: "added note" });
     });
 
     router.delete("/:id", async (req, res) => {
-        res.json({ message: "Delete group" });
+        res.json({ message: "Delete payment" });
     });
 
     return router;

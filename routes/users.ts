@@ -7,8 +7,8 @@ const createUsersRouter = () => {
 
 	router.get("/", async (req, res) => {
 		try {
-			const { email, password } = req.body;
-			const rows = await getCurrentUserId(email, password);
+			const email = req.query.email as unknown as string;
+			const rows = await getCurrentUserId(email);
 			res.status(200).json(rows);
 		} catch (error: any) {
 			LOG("Error fetching users", true, error);
