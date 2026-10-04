@@ -4,12 +4,13 @@ CREATE TABLE IF NOT EXISTS users
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
+    google_id VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL,
     super_user BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    session_id VARCHAR(255) NULL,
-    session_expires_at DATETIME NULL;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    session_id VARCHAR(255) UNIQUE,
+    session_expires_at DATETIME
 );
 `;
 
@@ -60,6 +61,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 
     CHECK (debt_user <> credit_user),
     CHECK (initial_amount > 0),
-    CHECK (remaining_amount >= 0)
+    CHECK (remaining_amount >= 0),
+    CHECK (remaining_amount <= initial_amount)
 );
 `;
