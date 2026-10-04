@@ -1,17 +1,12 @@
 import { Router } from "express";
-import { createUsersRouter } from "./routes/users.ts";
-import { createGroupsRouter } from "./routes/groups.ts";
-import { createPaymentsRouter } from "./routes/payments.ts";
-import { createTransactionsRouter } from "./routes/transactions.ts";
-import type { Database } from "./types.ts";
-import { LOG } from "./helper.ts";
-import { checkDBConnection } from "./db.ts";
-import { createTables, deleteTables, insertTestData } from "./queries/test.ts";
+import { LOG } from "../helpers/helper.js";
+import { checkDBConnection } from "../db/db.js";
+import { createTables, deleteTables, insertTestData } from "../test/test.js";
 
-const createRoutes = (db: Database) => {
-	const router = Router();
+const createTestRouter = () => {
+    const router = Router();
 
-	router.get("/", async (req, res) => {
+    router.get("/", async (req, res) => {
 		try {
 			const result = await checkDBConnection();
 			res.json(result);
@@ -45,12 +40,7 @@ const createRoutes = (db: Database) => {
 		}
 	});
 
-	router.use("/users", createUsersRouter(db));
-	router.use("/groups", createGroupsRouter(db));
-	router.use("/payments", createPaymentsRouter(db));
-	router.use("/transactions", createTransactionsRouter(db));
-
-	return router;
+    return router;
 };
 
-export { createRoutes };
+export { createTestRouter };

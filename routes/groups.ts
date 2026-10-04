@@ -1,9 +1,8 @@
 import { Router } from "express";
-import type { Database } from "../types.js";
-import { ErrorResponseDB, LOG } from "../helper.js";
-import { getAllGroups, getCurrentUserGroups } from "../queries/groupQueries.js";
+import { LOG, generateUniqueGroupCode } from "../helpers/helper.js";
+import { getAllGroups, getCurrentUserGroups, createGroup, joinGroup } from "../queries/groupQueries.js";
 
-const createGroupsRouter = (db: Database) => {
+const createGroupsRouter = () => {
     const router = Router();
 
     router.get("/", async (req, res) => {
@@ -21,15 +20,33 @@ const createGroupsRouter = (db: Database) => {
             const uid = Number(req.params.uid);
             const rows = await getCurrentUserGroups(uid);
             res.status(200).json(rows);
-        }
-        catch (error: any) {
+        } catch (error: any) {
             LOG("Error fetching groups for user", true, error);
             res.status(500).json({ error: "Internal Server Error" });
         }
     });
 
     router.post("/", async (req, res) => {
-        res.json({ message: "Create group" });
+        try {
+            const { name, userId } = req.body;
+            const groupCode = await generateUniqueGroupCode();
+            await createGroup(name, userId, groupCode);
+            res.json({ message: "Create group success", joinCode: groupCode });
+        } catch (error: any) {
+            LOG("Error fetching groups for user", true, error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    });
+
+    router.post("/add", async (req, res) => {
+        try {
+            const { userId, groupCode } = req.body;
+            await joinGroup(groupCode, userId);
+            res.json({ message: "User added to group successfully" });
+        } catch (error: any) {
+            LOG("Error fetching groups for user", true, error);
+            res.status(404).json({ error: error.message });
+        }
     });
 
     router.patch("/:id", async (req, res) => {
