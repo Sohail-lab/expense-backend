@@ -9,8 +9,8 @@ export const getUserByEmail = (email: number) => executeQuery(
 
 export const updateUserSession = async (
     userId: number,
-    sessionId: string,
-    expiresAt: Date
+    sessionId: string | null,
+    expiresAt: Date | null
 ) => {
     await executeQuery(
         `

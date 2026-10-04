@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { LOG } from "../helpers/helper.js";
+import { executeQuery, LOG } from "../helpers/helper.js";
 import { getUserByEmail, updateUserSession } from '../queries/authQueries.js';
+import { authenticate } from '../middleware/auth.js';
 import crypto from 'crypto';
 
 export const createAuthRouter = () => {
@@ -48,6 +49,23 @@ export const createAuthRouter = () => {
 
             res.status(500).json({
                 error: "Internal Server Error"
+            });
+        }
+    });
+
+    router.post("/logout", authenticate, async (req, res) => {
+        try {
+            const userId = (req as any).userId;
+
+            await updateUserSession(userId, null, null);
+
+            res.status(200).json({
+                message: "Logout successful"
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                error: "Logout failed"
             });
         }
     });

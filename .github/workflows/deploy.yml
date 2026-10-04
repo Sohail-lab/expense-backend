@@ -1,0 +1,65 @@
+name: Deploy Expense Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build backend
+        run: npm run build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.OCI_SSH_KEY }}" > ~/.ssh/oci_key
+          chmod 600 ~/.ssh/oci_key
+
+          ssh-keyscan -H "${{ secrets.OCI_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload new build
+        run: |
+          ssh -i ~/.ssh/oci_key \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
+            "rm -rf ~/staging/expense-backend/dist-new && mkdir -p ~/staging/expense-backend/dist-new"
+
+          scp -i ~/.ssh/oci_key -r \
+            dist/* \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:~/staging/expense-backend/dist-new/"
+
+      - name: Switch to new build
+        run: |
+          ssh -i ~/.ssh/oci_key \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
+            "
+              rm -rf ~/staging/expense-backend/dist-old &&
+              mv ~/staging/expense-backend/dist ~/staging/expense-backend/dist-old &&
+              mv ~/staging/expense-backend/dist-new ~/staging/expense-backend/dist
+            "
+
+      - name: Restart service
+        run: |
+          ssh -i ~/.ssh/oci_key \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
+            "sudo systemctl restart expensesplit.service"
+
+      - name: Verify service
+        run: |
+          ssh -i ~/.ssh/oci_key \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
+            "sudo systemctl is-active --quiet expensesplit.service"
