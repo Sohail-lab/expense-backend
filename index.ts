@@ -1,5 +1,5 @@
 import express from 'express';
-import { createRoutes } from './src/presentation/routes/index.js';
+import { createRoutes } from './src/mvp/routes/index.js';
 
 const app = express();
 
