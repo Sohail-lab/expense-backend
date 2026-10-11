@@ -14,6 +14,18 @@ CREATE TABLE IF NOT EXISTS users
 );
 `;
 
+// ALTER TABLE transactions ADD CONSTRAINT fk_transactions_debt_user 
+//     FOREIGN KEY (debt_user) REFERENCES users(user_id) ON DELETE CASCADE;
+
+// ALTER TABLE transactions ADD CONSTRAINT fk_transactions_credit_user 
+//     FOREIGN KEY (credit_user) REFERENCES users(user_id) ON DELETE CASCADE;
+
+// ALTER TABLE payments ADD CONSTRAINT fk_payments_transaction 
+//     FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id) ON DELETE CASCADE;
+
+// ALTER TABLE expense_groups ADD CONSTRAINT fk_groups_user 
+//     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+
 export const CreateGroupsTable: string = `
 CREATE TABLE IF NOT EXISTS expense_groups (
     group_id INT NOT NULL,
@@ -24,7 +36,9 @@ CREATE TABLE IF NOT EXISTS expense_groups (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (group_id, user_id)
+    PRIMARY KEY (group_id, user_id),
+    CONSTRAINT fk_groups_user 
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 `;
 
@@ -38,7 +52,9 @@ CREATE TABLE IF NOT EXISTS payments (
     amount DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CHECK (amount > 0)
+    CHECK (amount > 0),
+    CONSTRAINT fk_payments_transaction 
+    FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id) ON DELETE CASCADE
 );
 `;
 
@@ -62,6 +78,12 @@ CREATE TABLE IF NOT EXISTS transactions (
     CHECK (debt_user <> credit_user),
     CHECK (initial_amount > 0),
     CHECK (remaining_amount >= 0),
-    CHECK (remaining_amount <= initial_amount)
+    CHECK (remaining_amount <= initial_amount),
+    CONSTRAINT fk_transactions_debt_user 
+    FOREIGN KEY (debt_user) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_transactions_credit_user 
+    FOREIGN KEY (credit_user) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_transactions_group
+    FOREIGN KEY (group_id) REFERENCES expense_groups(group_id) ON DELETE CASCADE
 );
 `;

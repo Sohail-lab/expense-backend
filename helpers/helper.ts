@@ -13,6 +13,7 @@ export const ErrorResponseDB = (res: any, error: any) => res.status(400).json({
 
 export const executeTransaction = async (query: string, params?: any[]): Promise<void> => {
     const connection = await db.getConnection();
+    // await connection.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;');
 
     try {
         await connection.beginTransaction();

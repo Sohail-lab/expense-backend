@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { executeQuery, LOG } from "../helpers/helper.js";
+import { LOG } from "../helpers/helper.js";
 import { getUserByEmail, updateUserSession } from '../queries/authQueries.js';
 import { createGoogleUser } from '../queries/userQueries.js';
 import { authenticate } from '../middleware/auth.js';
@@ -44,7 +44,7 @@ export const createAuthRouter = () => {
                 message: "Login successful",
                 sessionId,
                 expiresAt,
-                userId: user.user_id
+                userId: user[0].user_id
             });
         } catch (error: any) {
             LOG("Login error", true, error);
@@ -136,8 +136,6 @@ export const createAuthRouter = () => {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     });
-
-
 
     return router;
 };

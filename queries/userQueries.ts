@@ -23,6 +23,7 @@ export const createUser = (userName: string, email: string, password: string) =>
     [userName, email, password]
 );
 
+// Deprecating
 export const createGoogleUser = async (userName: string, email: string, googleId: string) => await executeTransaction(
     `
     INSERT INTO users (name, email, google_id, password, super_user)
@@ -30,6 +31,21 @@ export const createGoogleUser = async (userName: string, email: string, googleId
     `,
     [userName, email, googleId]
 );
+
+export const linkOrCreateGoogleUser = (googleId: string, email: string, name: string) =>
+    executeTransaction(
+        `
+        -- Try to find by google_id or email
+        INSERT INTO users (name, email, google_id, password, super_user)
+        VALUES (?, ?, ?, '', FALSE)
+        ON DUPLICATE KEY UPDATE 
+            google_id = COALESCE(google_id, VALUES(google_id));
+        
+        SELECT * FROM users WHERE google_id = ? OR email = ?;
+        `,
+        [name, email, googleId, googleId, email]
+    );
+
 
 export const updateUser = async (userId: number, newData: any) => {
     const oldData = await executeQuery(
@@ -45,7 +61,7 @@ export const updateUser = async (userId: number, newData: any) => {
     const name = newName ?? oldName;
     const password = newPassword ?? oldPassword;
 
-    executeTransaction(
+    await executeTransaction(
         `
         UPDATE users
         SET name = ?, password = ?
@@ -68,7 +84,7 @@ export const deleteUser = async (userId: number, superUserId: number) => {
     if (!isAuthorized) {
         throw new Error("User not authorized");
     }
-    executeTransaction(
+    await executeTransaction(
         `
     SET @user_id = ?;
     DELETE FROM users
