@@ -32,9 +32,15 @@ jobs:
       - name: Extract SQL Backup File
         run: |
           cd ./restore_dir
-          unzip -o *.zip
+          
+          # Find any zip file recursively and extract it in its directory
+          find . -name "*.zip" -exec unzip -o {} \;
+          
+          # Locate the extracted .sql file from anywhere inside restore_dir
           SQL_FILE=$(find . -name "*.sql" | head -n 1)
           echo "Found SQL file: $SQL_FILE"
+          
+          # Save relative path for the next step
           echo "SQL_FILE_PATH=$SQL_FILE" >> $GITHUB_ENV
 
       - name: Restore Database via SSH Tunnel
