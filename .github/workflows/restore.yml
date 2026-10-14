@@ -3,9 +3,10 @@ name: Database Restore
 on:
   workflow_dispatch:
     inputs:
-      artifact_url:
-        description: 'Direct GitHub artifact download URL or zip file link'
+      artifact_name:
+        description: 'Name of the artifact to restore (e.g., latest-db-backup)'
         required: true
+        default: 'latest-db-backup'
         type: string
 
 jobs:
@@ -16,25 +17,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download Artifact Across Runs
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          workflow: heatwave-backup.yml
+          name: ${{ inputs.artifact_name }}
+          path: ./restore_dir
+          search_artifacts: true
+
       - name: Install MySQL Client and Unzip
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client unzip
 
-      - name: Download Artifact via URL
-        env:
-          DOWNLOAD_URL: ${{ inputs.artifact_url }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Extract SQL Backup File
         run: |
-          mkdir -p ./restore_dir
           cd ./restore_dir
-          
-          echo "Downloading artifact from URL..."
-          # Use curl with GitHub token authorization in case it's a protected GitHub API link
-          curl -L -H "Authorization: Bearer $GH_TOKEN" "$DOWNLOAD_URL" -o backup.zip
-          
-          # Unzip the downloaded archive
-          unzip -o backup.zip
-          
-          # Find the extracted .sql file
+          unzip -o *.zip
           SQL_FILE=$(find . -name "*.sql" | head -n 1)
           echo "Found SQL file: $SQL_FILE"
           echo "SQL_FILE_PATH=$SQL_FILE" >> $GITHUB_ENV
