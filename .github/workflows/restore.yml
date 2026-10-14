@@ -19,7 +19,7 @@ jobs:
       - name: Download Backup Artifact
         uses: actions/download-artifact@v4
         with:
-          name: db-backup-${{ inputs.backup_file_name }}
+          name: latest-db-backup
           path: ./restore_dir
 
       - name: Install MySQL Client
