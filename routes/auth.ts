@@ -128,6 +128,7 @@ export const createAuthRouter = () => {
                 message: "Login successful",
                 sessionId,
                 expiresAt,
+                email,
                 userId: user.user_id,
             });
 

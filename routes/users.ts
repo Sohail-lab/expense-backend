@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { LOG } from "../helpers/helper.js";
-import { getCurrentUserDetails, getCurrentUserId, createUser, deleteUser, updateUser } from '../queries/userQueries.js';
+import { getCurrentUserDetails, getCurrentUserId, createUser, deleteUser, updateUser, getUsersInSharedGroups } from '../queries/userQueries.js';
 
 const createUsersRouter = () => {
 	const router = Router();
@@ -23,6 +23,17 @@ const createUsersRouter = () => {
 			res.status(200).json(rows);
 		} catch (error: any) {
 			LOG(`Error fetching user details with id = ${req.params.id}`, true, error);
+			res.status(500).json({ error: "Internal Server Error" });
+		}
+	});
+
+	router.get("/all/:id", async (req, res) => {
+		try {
+			const id = req.params.id as unknown as number;
+			const rows = await getUsersInSharedGroups(id);
+			res.status(200).json(rows);
+		} catch (error: any) {
+			LOG("Error fetching users", true, error);
 			res.status(500).json({ error: "Internal Server Error" });
 		}
 	});
