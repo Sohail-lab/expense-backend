@@ -25,26 +25,47 @@ jobs:
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client
 
-      - name: Restore Database
+      - name: Restore Database via SSH Tunnel
         env:
+          OCI_SSH_KEY: ${{ secrets.OCI_SSH_KEY }}
+          OCI_HOST: ${{ secrets.OCI_HOST }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
+          OCI_USER: ${{ secrets.OCI_USER }}
         run: |
           FILE_PATH="./restore_dir/${{ inputs.backup_file_name }}"
           
           if [ -f "$FILE_PATH" ]; then
-            echo "Restoring database from $FILE_PATH..."
+            echo "Setting up SSH tunnel..."
+            echo "$OCI_SSH_KEY" > ssh-key.key
+            chmod 600 ssh-key.key
             
-            # Restore using standard mysql client with SSL enforced
-            mysql -h "$DB_HOST" \
-                  -P "$DB_PORT" \
+            # Open SSH tunnel in the background
+            ssh -o StrictHostKeyChecking=no \
+                -i ssh-key.key \
+                -L 3307:$DB_HOST:$DB_PORT \
+                $OCI_USER@$OCI_HOST -N &
+            
+            SSH_PID=$!
+            sleep 3
+            
+            echo "Restoring database from $FILE_PATH via localhost:3307..."
+            
+            # Restore targeting local forwarded port with SSL enforced
+            mysql -h 127.0.0.1 \
+                  -P 3307 \
                   -u "$DB_USER" \
                   -p"$DB_PASSWORD" \
-                  --ssl-mode=REQUIRED < "$FILE_PATH"
+                  --ssl-mode=REQUIRED \
+                  "$DB_NAME" < "$FILE_PATH"
                   
+            # Clean up tunnel and key file
+            kill $SSH_PID
+            rm ssh-key.key
+            
             echo "Database restore completed successfully!"
           else
             echo "Error: Backup file not found at $FILE_PATH"

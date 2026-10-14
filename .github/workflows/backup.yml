@@ -16,27 +16,49 @@ jobs:
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client
 
-      - name: Create Database Dump
+      - name: Create Database Dump via SSH Tunnel
         env:
+          OCI_SSH_KEY: ${{ secrets.OCI_SSH_KEY }}
+          OCI_HOST: ${{ secrets.OCI_HOST }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
+          OCI_USER: ${{ secrets.OCI_USER }}
         run: |
+          # 1. Setup the SSH key file securely on the runner
+          echo "$OCI_SSH_KEY" > ssh-key.key
+          chmod 600 ssh-key.key
+          
+          # 2. Open the SSH tunnel in the background
+          echo "Opening SSH tunnel to OCI instance..."
+          ssh -o StrictHostKeyChecking=no \
+              -i ssh-key.key \
+              -L 3307:$DB_HOST:$DB_PORT \
+              $OCI_USER@$OCI_HOST -N &
+          
+          # Capture the background process ID so we can shut it down later
+          SSH_PID=$!
+          sleep 3 # Brief pause to let the tunnel handshake establish
+
           TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
           BACKUP_FILE="db_backup_${DB_NAME}_${TIMESTAMP}.sql"
           
-          echo "Starting backup for database: $DB_NAME..."
+          echo "Starting backup for database: $DB_NAME via localhost:3307..."
           
-          # mysqldump with required SSL mode for OCI HeatWave
-          mysqldump -h "$DB_HOST" \
-                    -P "$DB_PORT" \
+          # 3. Run mysqldump targeting the local forwarded port (127.0.0.1:3307)
+          mysqldump -h 127.0.0.1 \
+                    -P 3307 \
                     -u "$DB_USER" \
                     -p"$DB_PASSWORD" \
                     --ssl-mode=REQUIRED \
                     --databases "$DB_NAME" \
                     --set-gtid-purged=OFF > "$BACKUP_FILE"
+          
+          # 4. Clean up: terminate the tunnel and delete the key file
+          kill $SSH_PID
+          rm ssh-key.key
           
           echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
 
