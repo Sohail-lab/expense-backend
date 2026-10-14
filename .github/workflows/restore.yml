@@ -3,8 +3,8 @@ name: Database Restore
 on:
   workflow_dispatch:
     inputs:
-      backup_file_name:
-        description: 'Exact name of the SQL backup file to restore (e.g., db_backup_...sql)'
+      artifact_url:
+        description: 'Direct GitHub artifact download URL or zip file link'
         required: true
         type: string
 
@@ -16,14 +16,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download Backup Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: latest-db-backup
-          path: ./restore_dir
+      - name: Install MySQL Client and Unzip
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client unzip
 
-      - name: Install MySQL Client
-        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+      - name: Download Artifact via URL
+        env:
+          DOWNLOAD_URL: ${{ inputs.artifact_url }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          mkdir -p ./restore_dir
+          cd ./restore_dir
+          
+          echo "Downloading artifact from URL..."
+          # Use curl with GitHub token authorization in case it's a protected GitHub API link
+          curl -L -H "Authorization: Bearer $GH_TOKEN" "$DOWNLOAD_URL" -o backup.zip
+          
+          # Unzip the downloaded archive
+          unzip -o backup.zip
+          
+          # Find the extracted .sql file
+          SQL_FILE=$(find . -name "*.sql" | head -n 1)
+          echo "Found SQL file: $SQL_FILE"
+          echo "SQL_FILE_PATH=$SQL_FILE" >> $GITHUB_ENV
 
       - name: Restore Database via SSH Tunnel
         env:
@@ -36,7 +50,7 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           OCI_USER: ${{ secrets.OCI_USER }}
         run: |
-          FILE_PATH="./restore_dir/${{ inputs.backup_file_name }}"
+          FILE_PATH="./restore_dir/$SQL_FILE_PATH"
           
           if [ -f "$FILE_PATH" ]; then
             echo "Setting up SSH tunnel..."
@@ -68,6 +82,6 @@ jobs:
             
             echo "Database restore completed successfully!"
           else
-            echo "Error: Backup file not found at $FILE_PATH"
+            echo "Error: Extracted SQL backup file not found at $FILE_PATH"
             exit 1
           fi
