@@ -1,0 +1,51 @@
+name: Database Restore
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_file_name:
+        description: 'Exact name of the SQL backup file to restore (e.g., db_backup_...sql)'
+        required: true
+        type: string
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Backup Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: db-backup-${{ inputs.backup_file_name }}
+          path: ./restore_dir
+
+      - name: Install MySQL Client
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+
+      - name: Restore Database
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          FILE_PATH="./restore_dir/${{ inputs.backup_file_name }}"
+          
+          if [ -f "$FILE_PATH" ]; then
+            echo "Restoring database from $FILE_PATH..."
+            
+            # Restore using standard mysql client with SSL enforced
+            mysql -h "$DB_HOST" \
+                  -P "$DB_PORT" \
+                  -u "$DB_USER" \
+                  -p"$DB_PASSWORD" \
+                  --ssl-mode=REQUIRED < "$FILE_PATH"
+                  
+            echo "Database restore completed successfully!"
+          else
+            echo "Error: Backup file not found at $FILE_PATH"
+            exit 1
+          fi

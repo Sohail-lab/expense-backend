@@ -1,0 +1,47 @@
+name: Database Backup
+
+on:
+  # schedule:
+  #   - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install MySQL Client
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+
+      - name: Create Database Dump
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
+          BACKUP_FILE="db_backup_${DB_NAME}_${TIMESTAMP}.sql"
+          
+          echo "Starting backup for database: $DB_NAME..."
+          
+          # mysqldump with required SSL mode for OCI HeatWave
+          mysqldump -h "$DB_HOST" \
+                    -P "$DB_PORT" \
+                    -u "$DB_USER" \
+                    -p"$DB_PASSWORD" \
+                    --ssl-mode=REQUIRED \
+                    --databases "$DB_NAME" \
+                    --set-gtid-purged=OFF > "$BACKUP_FILE"
+          
+          echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
+
+      - name: Upload Backup Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ env.BACKUP_FILE }}
+          path: "*.sql"
+          retention-days: 2
