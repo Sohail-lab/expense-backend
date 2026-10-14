@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       artifact_name:
-        description: 'Name of the artifact to restore (e.g., latest-db-backup)'
+        description: 'Name of the artifact to restore (e.g., latest-db-backup.sql)'
         required: true
-        default: 'latest-db-backup'
         type: string
 
 jobs:
