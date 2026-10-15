@@ -1,2 +1,8 @@
 node_modules
 *.env
+dbsize.sql
+generateUsers.js
+stressTest.js
+users.csv
+users.failures.json
+users.json

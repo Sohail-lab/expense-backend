@@ -23,7 +23,7 @@ const db = mysql.createPool({
     database: database,
 
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 30,
     queueLimit: 0,
     multipleStatements: true,
     connectAttributes: {
