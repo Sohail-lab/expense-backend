@@ -1,0 +1,1 @@
+SELECT * FROM payments WHERE payment_id = ? AND (debt_user = ? OR credit_user = ?);

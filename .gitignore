@@ -6,3 +6,4 @@ stressTest.js
 users.csv
 users.failures.json
 users.json
+dist/

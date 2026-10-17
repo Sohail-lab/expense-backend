@@ -1,4 +1,4 @@
-import { db } from "../db/db.js";
+import { db } from "../db/connection.js";
 import { getGroupCodes } from '../queries/groupQueries.js';
 
 export const LOG = (message: string, error?: boolean | false, ...optionalParams: any[]) => {

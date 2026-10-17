@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { db } from "../db/db.js";
+import { db } from "../db/connection.js";
 
 export const authenticate = async (
     req: Request,

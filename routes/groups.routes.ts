@@ -1,30 +1,14 @@
 import { Router } from "express";
 import { LOG, generateUniqueGroupCode } from "../helpers/helper.js";
-import { getAllGroups, getCurrentUserGroups, createGroup, joinGroup } from "../queries/groupQueries.js";
+import { createGroup, joinGroup } from "../queries/groupQueries.js";
+import { getAllGroups, getCurrentUserGroups } from '../controllers/groups.controller.js';
 
 const createGroupsRouter = () => {
     const router = Router();
 
-    router.get("/", async (req, res) => {
-        try {
-            const rows = await getAllGroups();
-            res.status(200).json(rows);
-        } catch (error: any) {
-            LOG("Error fetching groups", true, error);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    });
+    router.get("/", getAllGroups);
 
-    router.get("/:uid", async (req, res) => {
-        try {
-            const uid = Number(req.params.uid);
-            const rows = await getCurrentUserGroups(uid);
-            res.status(200).json(rows);
-        } catch (error: any) {
-            LOG("Error fetching groups for user", true, error);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    });
+    router.get("/:uid", getCurrentUserGroups);
 
     router.post("/", async (req, res) => {
         try {

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { createUsersRouter } from "../routes/users.js";
-import { createGroupsRouter } from "../routes/groups.js";
-import { createPaymentsRouter } from "../routes/payments.js";
-import { createTransactionsRouter } from "../routes/transactions.js";
-import { createAuthRouter } from '../routes/auth.js';
-import { createTestRouter } from '../routes/test.js';
-import { authenticate, secureAuthenticate } from '../middleware/auth.js';
+import { createUsersRouter } from "../routes/users.routes.js";
+import { createGroupsRouter } from "../routes/groups.routes.js";
+import { createPaymentsRouter } from "../routes/payments.routes.js";
+import { createTransactionsRouter } from "../routes/transactions.routes.js";
+import { createAuthRouter } from '../routes/auth.routes.js';
+import { createTestRouter } from '../routes/test.routes.js';
+import { authenticate, secureAuthenticate } from '../middlewares/auth';
 
 const createRoutes = () => {
 	const router = Router();

@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { LOG } from "../helpers/helper.js";
-import { checkDBConnection } from "../db/db.js";
 import { createTables, deleteTables, insertTestData } from "../test/test.js";
 
 const createTestRouter = () => {
@@ -8,8 +7,8 @@ const createTestRouter = () => {
 
     router.get("/", async (req, res) => {
 		try {
-			const result = await checkDBConnection();
-			res.json(result);
+			// const result = await checkDBConnection();
+			// res.json(result);
 		} catch (error: any) {
 			LOG("Error fetching tables", true, error);
 		}

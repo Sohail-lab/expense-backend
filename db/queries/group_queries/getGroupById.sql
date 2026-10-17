@@ -1,0 +1,1 @@
+SELECT * FROM expense_groups WHERE group_id = ?;
