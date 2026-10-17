@@ -23,8 +23,8 @@ const db = mysql.createPool({
     database: database,
 
     waitForConnections: true,
-    connectionLimit: 150,
-    queueLimit: 150,
+    connectionLimit: 15,
+    queueLimit: 0,
     multipleStatements: true,
     connectAttributes: {
         isolation_level: 'REPEATABLE-READ'
