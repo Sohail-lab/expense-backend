@@ -7,7 +7,7 @@ import {
     updateUserGoogleId,
     updateUserSession
 } from "../queries/authQueries.js";
-import { createGoogleUser } from "../queries/userQueries.js";
+import { createGoogleUser, createUser } from "../queries/userQueries.js";
 
 interface AuthenticatedRequest extends Request {
     userId?: number;
@@ -65,6 +65,16 @@ export const logout = async (req: AuthenticatedRequest, res: Response): Promise<
         });
     }
 };
+
+export const signUp = async (req: Request, res: Response): Promise<Response | void> => {
+        try {
+            const { name, email, password } = req.body;
+            const result = await createUser(name, email, password);
+            res.status(201).json({ message: "Create user succeeded", result });
+        } catch (error: any) {
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    };
 
 export const googleAuth = async (req: Request, res: Response): Promise<Response | void> => {
     try {
