@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
-import { executeQuery, LOG } from "../helpers/helper.js";
+import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
 import getAllPaymentsForTransactionAndUserQuery from "../db/queries/payment_queries/getAllPaymentsForTransactionAndUser.sql";
 import getPaymentByIdForUserQuery from "../db/queries/payment_queries/getPaymentByIdForUser.sql";
+import createPaymentQuery from "../db/queries/payment_queries/createPayment.sql";
+import { IPayment } from "../models/payment.model.js";
+import { AuthenticatedRequest } from "../models/authRequest.model.js";
 
-export const getAllPaymentsForTransactionAndUser = async (req: Request, res: Response) => {
+export const getAllPaymentsForTransactionAndUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const txnId = Number(req.query.id);
         const uid = Number(req.query.uid);
@@ -15,7 +18,7 @@ export const getAllPaymentsForTransactionAndUser = async (req: Request, res: Res
     }
 }
 
-export const getPaymentByIdForUser = async (req: Request, res: Response) => {
+export const getPaymentByIdForUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const uid = Number(req.params.uid);
         const paymentId = Number(req.query.paymentId)
@@ -28,14 +31,22 @@ export const getPaymentByIdForUser = async (req: Request, res: Response) => {
     }
 }
 
-export const createPayment = async (req: Request, res: Response) => {
-    res.json({ message: "Create payment" });
+export const createPayment = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const paymentData: IPayment = req.body;
+        await executeTransaction(createPaymentQuery, [paymentData.transaction_id, paymentData.note, paymentData.debt_user, paymentData.credit_user, paymentData.amount]);
+        res.status(201).json({ message: "Payment created successfully"});
+    }
+    catch (error: any) {
+        LOG("Error creating payment", true, error);
+        res.status(500).json({ error: error.message });
+    }
 }
 
-export const updatePayment = async (req: Request, res: Response) => {
+export const updatePayment = async (req: AuthenticatedRequest, res: Response) => {
     res.json({ message: "added note" });
 }
 
-export const deletePayment = async (req: Request, res: Response) => {
+export const deletePayment = async (req: AuthenticatedRequest, res: Response) => {
     res.json({ message: "Delete payment" });
 }

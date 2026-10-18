@@ -5,8 +5,9 @@ import getCurrentUserDetailsQuery from "../db/queries/user_queries/getCurrentUse
 import getUsersInSharedGroupsQuery from "../db/queries/user_queries/getUsersInSharedGroups.sql";
 import updateUserQuery from "../db/queries/user_queries/updateUser.sql";
 import deleteUserQuery from "../db/queries/user_queries/deleteUser.sql";
+import { AuthenticatedRequest } from "../models/authRequest.model.js";
 
-export const getCurrentUserId = async (req: Request, res: Response) => {
+export const getCurrentUserId = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const email = req.query.email as unknown as string;
         const rows = await executeQuery(getCurrentUserIdQuery, [email]);
@@ -17,7 +18,7 @@ export const getCurrentUserId = async (req: Request, res: Response) => {
     }
 }
 
-export const getCurrentUserDetails = async (req: Request, res: Response) => {
+export const getCurrentUserDetails = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const id = req.params.id as unknown as number;
         const rows = await executeQuery(getCurrentUserDetailsQuery, [id]);
@@ -28,7 +29,7 @@ export const getCurrentUserDetails = async (req: Request, res: Response) => {
     }
 }
 
-export const getUsersInSharedGroups = async (req: Request, res: Response) => {
+export const getUsersInSharedGroups = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const id = req.params.id as unknown as number;
         const rows = await executeQuery(getUsersInSharedGroupsQuery, [id, id]);
@@ -39,7 +40,7 @@ export const getUsersInSharedGroups = async (req: Request, res: Response) => {
     }
 }
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const id = req.params.id as unknown as number;
         const newData = req.body;
@@ -50,7 +51,7 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const id = req.params.id as unknown as number;
         const { superUserId } = req.body;

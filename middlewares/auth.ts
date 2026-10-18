@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { db } from "../db/connection.js";
+import { AuthenticatedRequest } from "../models/authRequest.model.js";
 
 export const authenticate = async (
     req: Request,
@@ -51,7 +52,8 @@ export const authenticate = async (
         }
 
         // Authentication successful
-        (req as any).userId = user.user_id;
+        (req as AuthenticatedRequest).userId = user.user_id;
+        (req as AuthenticatedRequest).email = user.email;
 
         next();
 

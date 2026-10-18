@@ -11,7 +11,7 @@ export const ErrorResponseDB = (res: any, error: any) => res.status(400).json({
     query: error.sql
 });;
 
-export const executeTransaction = async (query: string, params?: any[]): Promise<void> => {
+export const executeTransaction = async (query: string, params?: any[]): Promise<any> => {
     const connection = await db.getConnection();
     // await connection.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;');
 

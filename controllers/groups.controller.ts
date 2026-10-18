@@ -15,8 +15,9 @@ import {
   listGroupResponse,
   listUserGroupResponse,
 } from "../views/group.view.js";
+import { AuthenticatedRequest } from "../models/authRequest.model.js";
 
-export const getAllGroups = async (req: Request, res: Response) => {
+export const getAllGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const rows: IGroup[] = await executeQuery(getAllGroupsQuery);
     res.status(200).json(listGroupResponse(rows));
@@ -26,7 +27,7 @@ export const getAllGroups = async (req: Request, res: Response) => {
   }
 };
 
-export const getCurrentUserGroups = async (req: Request, res: Response) => {
+export const getCurrentUserGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const uid = Number(req.params.uid);
     const rows: IGroup[] = await executeQuery(getCurrentUserGroupsQuery, [uid]);
@@ -37,7 +38,7 @@ export const getCurrentUserGroups = async (req: Request, res: Response) => {
   }
 };
 
-export const createGroup = async (req: Request, res: Response) => {
+export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, userId } = req.body;
     const groupCode = await generateUniqueGroupCode();
@@ -54,7 +55,7 @@ export const createGroup = async (req: Request, res: Response) => {
   }
 };
 
-export const joinGroup = async (req: Request, res: Response) => {
+export const joinGroup = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId, groupCode } = req.body;
     await executeTransaction(joinGroupQuery, [userId, groupCode]);
@@ -65,11 +66,11 @@ export const joinGroup = async (req: Request, res: Response) => {
   }
 };
 
-export const updateGroup = async (req: Request, res: Response) => {
+export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
   res.status(200).json({ message: "Update group partially" });
 };
 
-export const deleteGroup = async (req: Request, res: Response) => {
+export const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
   res.status(204).json({ message: "Delete group" });
 };
 
