@@ -20,7 +20,8 @@ import { AuthenticatedRequest } from "../models/authRequest.model.js";
 export const getAllGroups = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const rows: IGroup[] = await executeQuery(getAllGroupsQuery);
-    res.status(200).json(listGroupResponse(rows));
+    // res.status(200).json(listGroupResponse(rows));
+    res.status(200).json(rows);
   } catch (error: any) {
     LOG("Error fetching groups", true, error);
     res.status(500).json({ error: error.message });
@@ -31,7 +32,8 @@ export const getCurrentUserGroups = async (req: AuthenticatedRequest, res: Respo
   try {
     const uid = Number(req.params.uid);
     const rows: IGroup[] = await executeQuery(getCurrentUserGroupsQuery, [uid]);
-    res.status(200).json(listUserGroupResponse(rows));
+    // res.status(200).json(listUserGroupResponse(rows));
+    res.status(200).json(rows);
   } catch (error: any) {
     LOG("Error fetching groups for user", true, error);
     res.status(500).json({ error: error.message });
