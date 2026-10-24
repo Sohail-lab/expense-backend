@@ -1,5 +1,5 @@
-import { db } from "../db/db.js";
-import { getGroupCodes } from '../queries/groupQueries.js';
+import { db } from "../db/connection.js";
+import { getGroupCodes } from '../controllers/groups.controller';
 
 export const LOG = (message: string, error?: boolean | false, ...optionalParams: any[]) => {
     console.log(`[${new Date().toISOString()}]${error ? '[ERROR]' : ''} ${message}`, ...optionalParams);
@@ -11,7 +11,7 @@ export const ErrorResponseDB = (res: any, error: any) => res.status(400).json({
     query: error.sql
 });;
 
-export const executeTransaction = async (query: string, params?: any[]): Promise<void> => {
+export const executeTransaction = async (query: string, params?: any[]): Promise<any> => {
     const connection = await db.getConnection();
     // await connection.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;');
 

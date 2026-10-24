@@ -1,0 +1,1 @@
+UPDATE users SET google_id = ? WHERE user_id = ?;

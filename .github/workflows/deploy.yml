@@ -9,49 +9,36 @@ jobs:
     environment: Production
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build backend
-        run: npm run build
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-
           echo "${{ secrets.OCI_SSH_KEY }}" > ~/.ssh/oci_key
           chmod 600 ~/.ssh/oci_key
-
           ssh-keyscan -H "${{ secrets.OCI_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Upload new build
+      - name: Pull, Build, and Swap on OCI
         run: |
-          ssh -i ~/.ssh/oci_key \
-            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
-            "rm -rf ~/prod/expense-backend/dist-new && mkdir -p ~/prod/expense-backend/dist-new"
+          ssh -i ~/.ssh/oci_key "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" '
+            set -e
+            cd ~/prod/expense-backend
 
-          scp -i ~/.ssh/oci_key -r \
-            dist/* \
-            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:~/prod/expense-backend/dist-new/"
+            echo "Pulling latest code from main..."
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
 
-      - name: Switch to new build
-        run: |
-          ssh -i ~/.ssh/oci_key \
-            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
-            "
-              rm -rf ~/prod/expense-backend/dist-old &&
-              mv ~/prod/expense-backend/dist ~/prod/expense-backend/dist-old &&
-              mv ~/prod/expense-backend/dist-new ~/prod/expense-backend/dist
-            "
+            echo "Installing dependencies..."
+            npm ci
+
+            echo "Backing up current dist to dist-old..."
+            rm -rf dist-old
+            if [ -d "dist" ]; then
+              cp -r dist dist-old
+            fi
+
+            echo "Building project into temporary directory or overwriting dist..."
+            npm run build
+          '
 
       - name: Restart service
         run: |

@@ -1,0 +1,1 @@
+SELECT DISTINCT group_code FROM expense_groups;

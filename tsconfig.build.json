@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "rootDir": "./",
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*",
+    "controllers/**/*",
+    "routes/**/*",
+    "middlewares/**/*",
+    "services/**/*",
+    "helpers/**/*",
+    "models/**/*",
+    "db/**/*",
+    "views/**/*",
+    "types/**/*",
+    "config/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test/**/*",
+    "scripts/**/*"
+  ]
+}

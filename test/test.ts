@@ -1,10 +1,8 @@
-import { db } from "../db/db.js";
-import {
-    CreateUsersTable,
-    CreateGroupsTable,
-    CreateTransactionsTable,
-    CreatePaymentsTable
-} from "../queries/createInitialTables.js";
+import { db } from "../db/connection.js";
+import CreateUsersTable from "../db/queries/tables/users_table.sql";
+import CreateGroupsTable from "../db/queries/tables/groups_table.sql";
+import CreateTransactionsTable from "../db/queries/tables/transactions_table.sql";
+import CreatePaymentsTable from "../db/queries/tables/payments_table.sql";
 import { LOG } from "../helpers/helper.js";
 
 const getAllTablesQuery = `SHOW TABLES;`;

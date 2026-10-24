@@ -1,0 +1,1 @@
+SELECT * FROM transactions WHERE group_id = ? AND (debt_user = ? OR credit_user = ?);

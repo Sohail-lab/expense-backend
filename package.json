@@ -1,13 +1,14 @@
 {
   "name": "backend",
-  "version": "1.0.0",
+  "version": "1.1",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "dev": "tsx watch index.ts",
-    "build": "tsc"
+    "check:sql": "node scripts/check-sql-imports.mjs",
+    "dev": "node scripts/check-sql-imports.mjs && tsx watch --import ./register-sql-loader.mjs src/server.ts",
+    "build": "node scripts/check-sql-imports.mjs && tsup src/server.ts --format esm --loader .sql=text --clean",
+    "start": "node dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.5.0",
+    "tsup": "^9.0.0",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }
