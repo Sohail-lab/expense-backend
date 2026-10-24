@@ -1,31 +1,25 @@
 import { IGroup } from "../models/group.model";
 
-function userGroupResponse(g: IGroup) {
+function groupDetails(g: IGroup) {
     return {
-        Name: g.name,
-        Code: g.group_code,
-        JoinDate: g.join_date,
-        CreatedBy: g.created_by,
-        CreatedAt: g.created_at,
-        UpdatedAt: g.updated_at
+        group_id: g.group_id,
+        name: g.name,
+        user_id: g.user_id,
+        group_code: g.group_code,
+        created_at: g.created_at,
+        updated_at: g.updated_at,
+        created_by: g.created_by,
+        join_date: g.join_date
     }
 }
 
-function groupResponse(g: IGroup) {
+export function showMessage(message: string, groupCode?: string) {
     return {
-        Name: g.name,
-        Code: g.group_code,
-        Id: g.group_id,
-        CreatedBy: g.created_by,
-        CreatedAt: g.created_at,
-        UpdatedAt: g.updated_at
+        message: message,
+        ...(groupCode && { group_code: groupCode })
     }
 }
 
-export function listGroupResponse(groupList: IGroup[]) {
-    return groupList.map(groupResponse);
-}
-
-export function listUserGroupResponse(groupList: IGroup[]) {
-    return groupList.map(userGroupResponse);
+export function listGroupDetails(groupList: IGroup[]) {
+    return groupList.map(groupDetails);
 }

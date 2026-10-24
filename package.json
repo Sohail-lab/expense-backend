@@ -5,8 +5,9 @@
   "main": "server.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --import ./register-sql-loader.mjs src/server.ts",
-    "build": "tsup src/server.ts --format esm --loader .sql=text --clean",
+    "check:sql": "node scripts/check-sql-imports.mjs",
+    "dev": "node scripts/check-sql-imports.mjs && tsx watch --import ./register-sql-loader.mjs src/server.ts",
+    "build": "node scripts/check-sql-imports.mjs && tsup src/server.ts --format esm --loader .sql=text --clean",
     "start": "node dist/server.js"
   },
   "repository": {

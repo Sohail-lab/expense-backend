@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import crypto from "crypto";
-import { executeQuery, LOG } from "../helpers/helper.js";
-import {
-  getUserByEmail,
-  getUserByGoogleId,
-  updateUserGoogleId,
-} from "../queries/authQueries.js";
-import { createGoogleUser, createUser } from "../queries/userQueries.js";
+import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
+import getUserByEmailQuery from "../db/queries/auth_queries/getUserByEmail.sql";
+import getUserByGoogleIdQuery from "../db/queries/auth_queries/getUserByEmail.sql";
+import updateUserSessionQuery from "../db/queries/auth_queries/updateUserSession.sql";
+import createUserQuery from "../db/queries/auth_queries/createUser.sql";
+import linkOrCreateGoogleUserQuery from "../db/queries/auth_queries/linkOrCreateGoogleUser.sql";
 import { AuthenticatedRequest } from "../models/authRequest.model.js";
+import { loginSuccessDetails, showMessage } from "../views/auth.view.js";
 
 export const login = async (
   req: Request,
@@ -16,7 +16,7 @@ export const login = async (
   try {
     const { email, password } = req.body;
 
-    const user = await getUserByEmail(email);
+    const user = await executeQuery(getUserByEmailQuery, [email]);
     if (!user || user.length === 0) {
       return res.status(401).json({
         error: "Invalid email or password",
@@ -35,12 +35,16 @@ export const login = async (
 
     await updateUserSession(user[0].user_id, sessionId, expiresAt);
 
-    return res.status(200).json({
-      message: "Login successful",
-      sessionId,
-      expiresAt,
-      userId: user[0].user_id,
-    });
+    return res
+      .status(200)
+      .json(
+        loginSuccessDetails(
+          "Login successful",
+          sessionId,
+          expiresAt,
+          user[0].user_id,
+        ),
+      );
   } catch (error: any) {
     LOG("Login error", true, error);
     return res.status(500).json({
@@ -58,9 +62,7 @@ export const logout = async (
 
     await updateUserSession(userId, null, null);
 
-    return res.status(200).json({
-      message: "Logout successful",
-    });
+    return res.status(200).json(showMessage("Logout successful"));
   } catch (error) {
     return res.status(500).json({
       error: "Logout failed",
@@ -74,8 +76,12 @@ export const signUp = async (
 ): Promise<Response | void> => {
   try {
     const { name, email, password } = req.body;
-    const result = await createUser(name, email, password);
-    res.status(201).json({ message: "Create user succeeded", result });
+    await executeTransaction(createUserQuery, [
+      name,
+      email,
+      password,
+    ]);
+    res.status(201).json(showMessage("User created successfully"));
   } catch (error: any) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -113,19 +119,25 @@ export const googleAuth = async (
     }
 
     // 2. Find user by google_id first, then fall back to email
-    let userRows = await getUserByGoogleId(googleId);
+    let userRows = await executeQuery(getUserByGoogleIdQuery, [googleId]);
 
     if (!userRows || userRows.length === 0) {
-      userRows = await getUserByEmail(email);
+      userRows = await executeQuery(getUserByEmailQuery, [email]);
 
-      if (userRows && userRows.length > 0) {
-        // Link Google account to existing email user
-        await updateUserGoogleId(userRows[0].user_id, googleId);
-      } else {
-        // Register new Google-authenticated user
-        await createGoogleUser(name, email, googleId);
-        userRows = await getUserByGoogleId(googleId);
-      }
+      await executeTransaction(linkOrCreateGoogleUserQuery, [
+        name,
+        email,
+        googleId,
+      ]);
+
+      // if (userRows && userRows.length > 0) {
+      //   // Link Google account to existing email user
+      //   await updateUserGoogleIdQuery(userRows[0].user_id, googleId);
+      // } else {
+      //   // Register new Google-authenticated user
+      //   await createGoogleUser(name, email, googleId);
+      //   userRows = await getUserByGoogleIdQuery(googleId);
+      // }
     }
 
     const user = userRows[0];
@@ -136,13 +148,13 @@ export const googleAuth = async (
 
     await updateUserSession(user.user_id, sessionId, expiresAt);
 
-    return res.status(200).json({
-      message: "Login successful",
+    return res.status(200).json(loginSuccessDetails(
+      "Login successful",
       sessionId,
       expiresAt,
-      email,
-      userId: user.user_id,
-    });
+      user.user_id,
+      email
+    ));
   } catch (error: any) {
     LOG("Google login error", true, error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -150,21 +162,9 @@ export const googleAuth = async (
 };
 
 const updateUserSession = async (
-    userId: number,
-    sessionId: string | null,
-    expiresAt: Date | null
+  userId: number,
+  sessionId: string | null,
+  expiresAt: Date | null,
 ) => {
-    await executeQuery(
-        `
-        UPDATE users
-        SET session_id = ?,
-            session_expires_at = ?
-        WHERE user_id = ?
-        `,
-        [
-            sessionId,
-            expiresAt,
-            userId
-        ]
-    );
+  await executeQuery(updateUserSessionQuery, [sessionId, expiresAt, userId]);
 };
