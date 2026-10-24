@@ -20,6 +20,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/oci_key "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" '
             set -e
+            source ~/.nvm/nvm.sh
             cd ~/prod/expense-backend
 
             echo "Pulling latest code from main..."
