@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import crypto from "crypto";
-import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
+import { executeQuery, executeTransaction, generateSessionIdAndExpiry, LOG } from "../helpers/helper.js";
 import getUserByEmailQuery from "../db/queries/auth_queries/getUserByEmail.sql";
 import getUserByGoogleIdQuery from "../db/queries/auth_queries/getUserByEmail.sql";
 import updateUserSessionQuery from "../db/queries/auth_queries/updateUserSession.sql";
@@ -30,8 +29,7 @@ export const login = async (
       });
     }
 
-    const sessionId = crypto.randomBytes(8).toString("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const { sessionId, expiresAt } = generateSessionIdAndExpiry();
 
     await updateUserSession(user[0].user_id, sessionId, expiresAt);
 
@@ -129,22 +127,12 @@ export const googleAuth = async (
         email,
         googleId,
       ]);
-
-      // if (userRows && userRows.length > 0) {
-      //   // Link Google account to existing email user
-      //   await updateUserGoogleIdQuery(userRows[0].user_id, googleId);
-      // } else {
-      //   // Register new Google-authenticated user
-      //   await createGoogleUser(name, email, googleId);
-      //   userRows = await getUserByGoogleIdQuery(googleId);
-      // }
     }
 
     const user = userRows[0];
 
     // 3. Generate session
-    const sessionId = crypto.randomBytes(8).toString("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const { sessionId, expiresAt } = generateSessionIdAndExpiry();
 
     await updateUserSession(user.user_id, sessionId, expiresAt);
 
