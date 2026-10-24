@@ -34,11 +34,18 @@ jobs:
             echo "Backing up current dist to dist-old..."
             rm -rf dist-old
             if [ -d "dist" ]; then
-              cp -r dist dist-old
+              mv dist dist-old
             fi
 
             echo "Building project into temporary directory or overwriting dist..."
-            npm run build
+            if ! npm run build; then
+              echo "Build failed! Restoring dist-old to dist..."
+              rm -rf dist
+              if [ -d "dist-old" ]; then
+                mv dist-old dist
+              fi
+              exit 1
+            fi
           '
 
       - name: Restart service
