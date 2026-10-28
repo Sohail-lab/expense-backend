@@ -1,0 +1,23 @@
+name: Monitor Expense Backend Logs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  logs:
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.OCI_SSH_KEY }}" > ~/.ssh/oci_key
+          chmod 600 ~/.ssh/oci_key
+          ssh-keyscan -H "${{ secrets.OCI_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Stream Live Logs
+        run: |
+          ssh -i ~/.ssh/oci_key \
+            "${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}" \
+            "sudo timeout 15 journalctl -u expensesplit.service -f -n 50"
