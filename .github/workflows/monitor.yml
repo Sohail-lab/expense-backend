@@ -1,7 +1,9 @@
 name: Monitor Expense Backend Logs
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - Monitor-issue
 
 jobs:
   logs:
