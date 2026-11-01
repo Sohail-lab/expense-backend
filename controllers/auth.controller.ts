@@ -122,7 +122,7 @@ export const googleAuth = async (
     if (!userRows || userRows.length === 0) {
       userRows = await executeQuery(getUserByEmailQuery, [email]);
 
-      await executeTransaction(linkOrCreateGoogleUserQuery, [
+      userRows = await executeTransaction(linkOrCreateGoogleUserQuery, [
         name,
         email,
         googleId,
