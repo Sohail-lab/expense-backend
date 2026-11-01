@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
-import createTransactionQuery from "../db/queries/transaction_queries/createTransaction.sql";
-import getTransactionByGroupForUserQuery from "../db/queries/transaction_queries/getTransactionByGroupForUser.sql";
+import createTransactionQuery from "../db/queries/transaction/createTransaction.sql";
+import getTransactionByGroupForUserQuery from "../db/queries/transaction/getTransactionByGroupForUser.sql";
 import { AuthenticatedRequest } from "../models/authRequest.model.js";
 import { ITransaction } from "../models/transaction.model.js";
 import { listTransactionDetails, showMessage } from "../views/transaction.view.js";

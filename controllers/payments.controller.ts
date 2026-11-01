@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
-import getAllPaymentsForTransactionAndUserQuery from "../db/queries/payment_queries/getAllPaymentsForTransactionAndUser.sql";
-import getPaymentByIdForUserQuery from "../db/queries/payment_queries/getPaymentByIdForUser.sql";
-import createPaymentQuery from "../db/queries/payment_queries/createPayment.sql";
+import getAllPaymentsForTransactionAndUserQuery from "../db/queries/payment/getAllPaymentsForTransactionAndUser.sql";
+import getPaymentByIdForUserQuery from "../db/queries/payment/getPaymentByIdForUser.sql";
+import createPaymentQuery from "../db/queries/payment/createPayment.sql";
 import { IPayment } from "../models/payment.model.js";
 import { AuthenticatedRequest } from "../models/authRequest.model.js";
 import { listPaymentDetails, showMessage } from "../views/payment.view.js";

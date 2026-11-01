@@ -5,11 +5,11 @@ import {
   LOG,
   generateUniqueGroupCode,
 } from "../helpers/helper.js";
-import getAllGroupsQuery from "../db/queries/group_queries/getAllGroups.sql";
-import getCurrentUserGroupsQuery from "../db/queries/group_queries/getCurrentUserGroups.sql";
-import createGroupQuery from "../db/queries/group_queries/createGroup.sql";
-import joinGroupQuery from "../db/queries/group_queries/joinGroup.sql";
-import getGroupCodesQuery from "../db/queries/group_queries/getGroupCodes.sql";
+import getAllGroupsQuery from "../db/queries/group/getAllGroups.sql";
+import getCurrentUserGroupsQuery from "../db/queries/group/getCurrentUserGroups.sql";
+import createGroupQuery from "../db/queries/group/createGroup.sql";
+import joinGroupQuery from "../db/queries/group/joinGroup.sql";
+import getGroupCodesQuery from "../db/queries/group/getGroupCodes.sql";
 import { IGroup } from "../models/group.model.js";
 import {
   listGroupDetails,

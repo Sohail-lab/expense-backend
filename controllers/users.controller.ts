@@ -1,10 +1,10 @@
 import { Response } from "express";
 import { executeQuery, executeTransaction, LOG } from "../helpers/helper.js";
-import getCurrentUserIdQuery from "../db/queries/auth_queries/getCurrentUserId.sql";
-import getCurrentUserDetailsQuery from "../db/queries/user_queries/getCurrentUserDetails.sql";
-import getUsersInSharedGroupsQuery from "../db/queries/user_queries/getUsersInSharedGroups.sql";
-import updateUserQuery from "../db/queries/user_queries/updateUser.sql";
-import deleteUserQuery from "../db/queries/auth_queries/deleteUser.sql";
+import getCurrentUserIdQuery from "../db/queries/auth/getCurrentUserId.sql";
+import getCurrentUserDetailsQuery from "../db/queries/user/getCurrentUserDetails.sql";
+import getUsersInSharedGroupsQuery from "../db/queries/user/getUsersInSharedGroups.sql";
+import updateUserQuery from "../db/queries/user/updateUser.sql";
+import deleteUserQuery from "../db/queries/auth/deleteUser.sql";
 import { AuthenticatedRequest } from "../models/authRequest.model.js";
 import { IUser } from "../models/user.model.js";
 import { showMessage, showUserDetails } from "../views/user.view.js";

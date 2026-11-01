@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { executeQuery, executeTransaction, generateSessionIdAndExpiry, LOG } from "../helpers/helper.js";
-import getUserByEmailQuery from "../db/queries/auth_queries/getUserByEmail.sql";
-import getUserByGoogleIdQuery from "../db/queries/auth_queries/getUserByEmail.sql";
-import updateUserSessionQuery from "../db/queries/auth_queries/updateUserSession.sql";
-import createUserQuery from "../db/queries/auth_queries/createUser.sql";
-import linkOrCreateGoogleUserQuery from "../db/queries/auth_queries/linkOrCreateGoogleUser.sql";
+import getUserByEmailQuery from "../db/queries/auth/getUserByEmail.sql";
+import getUserByGoogleIdQuery from "../db/queries/auth/getUserByEmail.sql";
+import updateUserSessionQuery from "../db/queries/auth/updateUserSession.sql";
+import createUserQuery from "../db/queries/auth/createUser.sql";
+import linkOrCreateGoogleUserQuery from "../db/queries/auth/linkOrCreateGoogleUser.sql";
 import { AuthenticatedRequest } from "../models/authRequest.model.js";
 import { loginSuccessDetails, showMessage } from "../views/auth.view.js";
 
