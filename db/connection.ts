@@ -14,7 +14,10 @@ const db = mysql.createPool({
     multipleStatements: true,
     connectAttributes: {
         isolation_level: 'REPEATABLE-READ'
-    }
+    },
+    // fix collation and charset issues
+    charset: 'utf8mb4',
+    collation: 'utf8mb4_0900_ai_ci'
 });
 
 // const checkDBConnection = async () => {
