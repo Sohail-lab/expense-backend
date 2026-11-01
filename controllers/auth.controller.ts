@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { executeQuery, executeTransaction, generateSessionIdAndExpiry, LOG } from "../helpers/helper.js";
 import getUserByEmailQuery from "../db/queries/auth/getUserByEmail.sql";
-import getUserByGoogleIdQuery from "../db/queries/auth/getUserByEmail.sql";
+import getUserByGoogleIdQuery from "../db/queries/auth/getUserByGoogleId.sql";
 import updateUserSessionQuery from "../db/queries/auth/updateUserSession.sql";
 import createUserQuery from "../db/queries/auth/createUser.sql";
 import linkOrCreateGoogleUserQuery from "../db/queries/auth/linkOrCreateGoogleUser.sql";
@@ -122,12 +122,15 @@ export const googleAuth = async (
     if (!userRows || userRows.length === 0) {
       userRows = await executeQuery(getUserByEmailQuery, [email]);
 
-      userRows = await executeTransaction(linkOrCreateGoogleUserQuery, [
+      await executeTransaction(linkOrCreateGoogleUserQuery, [
         name,
         email,
-        googleId,
         googleId
       ]);
+
+      if(!userRows || userRows.length === 0) {
+        userRows = await executeQuery(getUserByGoogleIdQuery, [googleId]);
+      }
     }
 
     const user = userRows[0];
