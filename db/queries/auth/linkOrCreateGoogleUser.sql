@@ -1,4 +1,6 @@
-SET @name = ?, @email = ?, @google_id = ?;
+SET @name = ?;
+SET @email = ?;
+SET @google_id = ?;
 INSERT INTO users (name, email, google_id, password, super_user)
 VALUES (@name, @email, @google_id, '', FALSE) AS new_row
 ON DUPLICATE KEY UPDATE 
