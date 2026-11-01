@@ -126,6 +126,7 @@ export const googleAuth = async (
         name,
         email,
         googleId,
+        googleId
       ]);
     }
 
